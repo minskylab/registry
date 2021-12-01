@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  registry:
+    image: registry:2
+    restart: always 
+    environment:
+      # REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      # REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      # REGISTRY_AUTH: htpasswd
+      # REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      # REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm 
+      REGISTRY_STORAGE: s3
+      REGISTRY_STORAGE_S3_ACCESSKEY: ${REGISTRY_STORAGE_S3_ACCESSKEY}
+      REGISTRY_STORAGE_S3_SECRETKEY: ${REGISTRY_STORAGE_S3_SECRETKEY}
+      REGISTRY_STORAGE_S3_BUCKET: ${REGISTR Y_STORAGE_S3_BUCKET}
+      REGISTRY_STORAGE_S3_REGION: ${REGISTRY_STORAGE_S3_REGION}
+      REGISTRY_STORAGE_S3_REGIONENDPOINT: ${REGISTRY_STORAGE_S3_REGIONENDPOINT}
+  npmanager:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - data:/data
+      - letsencrypt:/etc/letsencrypt
+volumes:
+  data:
+  letsencrypt:
